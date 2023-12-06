@@ -13,11 +13,12 @@ import java.sql.ResultSet;
 import mx.itson.cinecito.persistence.MySQLConnection;
 
 /**
+ * En  esta clase declaran variables para la tabla movie y functions
+ * se aplican los metodos utilizados para realizar un CRUD en movie.
  *
  * @author avalo
  */
 public class Cinecito {
-
 
     private int idMovie;
     private int idFunctions;
@@ -28,7 +29,7 @@ public class Cinecito {
     private String gender;
 
     /**
-     * Este métod esta diseñado para recuperar una lista de objetos de tipo
+     * Este método esta diseñado para recuperar una lista de objetos de tipo
      * Cinecito desde una base de datos.
      *
      * @param filtro
@@ -38,12 +39,17 @@ public class Cinecito {
         List<Cinecito> cinecitos = new ArrayList<>();
 
         try {
+            
+            //Inicia la conexion con la base de datos
             Connection conexion = MySQLConnection.get();
+            
+            //Ingresa el comando en la base datos
             PreparedStatement statement = conexion.prepareStatement("SELECT * FROM movie WHERE name LIKE ?");
             statement.setString(1, "%" + filtro + "%");
 
             ResultSet resultSet = statement.executeQuery();
 
+            // Iterar a través del conjunto de resultados y rellenar la lista de objetos Cinecito
             while (resultSet.next()) {
                 Cinecito c = new Cinecito();
                 c.setIdMovie(resultSet.getInt(1));
@@ -64,23 +70,29 @@ public class Cinecito {
      * datos de nombre Cinecito.
      *
      * @param name
-     * @param room
-     * @param time
+     * @param sinopsys
+     * @param gender
      * @return result
      */
     public boolean save(String name, String sinopsys, String gender) {
 
         boolean result = false;
         try {
+            
+            //Se conecta con la base de datos
             Connection conexion = MySQLConnection.get();
+            
+            //
             String query = "INSERT INTO movie (name, sinopsys, gender) VALUES (?,?,?)";
             PreparedStatement statement = conexion.prepareStatement(query);
 
+             //Ingresa el comando a detectar en la base datos
             statement.setString(1, name);
             statement.setString(2, sinopsys);
             statement.setString(3, gender);
             statement.execute();
 
+             //comprueba si se ha realizado correctamente
             result = statement.getUpdateCount() == 1;
 
             conexion.close();
@@ -98,23 +110,29 @@ public class Cinecito {
      *
      * @param idMovie
      * @param name
-     * @param room
-     * @param time
+     * @param sinopsys
+     * @param gender
      * @return result
      */
     public boolean update(int idMovie, String name, String sinopsys, String gender) {
         boolean result = false;
         try {
+
+            //Establece la conexion con la base de datos
             Connection conexion = MySQLConnection.get();
 
+            //Ingresa el comando a detectar en la base datos
             String query = "UPDATE movie SET name = ?, sinopsys = ?, gender = ? WHERE idMovie = ?";
             PreparedStatement statement = conexion.prepareStatement(query);
+            
+             //Establece el valor del parametro
             statement.setString(1, name);
             statement.setString(2, sinopsys);
             statement.setString(3, gender);
             statement.setInt(4, idMovie);
             statement.execute();
 
+            //comprueba si se ha realizado correctamente
             result = statement.getUpdateCount() == 1;
 
             conexion.close();
@@ -137,13 +155,20 @@ public class Cinecito {
     public boolean delete(int idMovie) {
         boolean result = false;
         try {
+            //Establece la conexion con la base de datos
             Connection conexion = MySQLConnection.get();
+
+            //Ingresa el comando a detectar en la base datos
             String query = "DELETE FROM movie WHERE idMovie = ?";
             PreparedStatement statement = conexion.prepareStatement(query);
 
+            //Establece el valor del parametro
             statement.setInt(1, idMovie);
+
+            //Ejecuta la accion
             statement.execute();
 
+            //comprueba si se ha realizado correctamente
             result = statement.getUpdateCount() == 1;
 
             conexion.close();
@@ -238,7 +263,7 @@ public class Cinecito {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    
+
     /**
      * @return the idFunction
      */

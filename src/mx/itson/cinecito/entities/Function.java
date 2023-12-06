@@ -14,13 +14,21 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Se crean los metodos para realizar un CRUD en functions
+ * 
  * @author avalo
  */
 public class Function extends Cinecito {
 
     Cinecito cine = new Cinecito();
 
+    /**
+     * Este método esta diseñado para recuperar una lista de objetos de tipo
+     * Cinecito desde una base de datos.
+     *
+     * @param filtro
+     * @return function
+     */
     public static List<Function> getAlls(String filtro) {
         List<Function> function = new ArrayList<>();
 
@@ -46,6 +54,13 @@ public class Function extends Cinecito {
         return function;
     }
 
+    /**
+     *
+     * @param name
+     * @param room
+     * @param time
+     * @return
+     */
     public boolean saveFunction(String name, String room, String time) {
         try {
             Connection connection = MySQLConnection.get();
@@ -71,9 +86,19 @@ public class Function extends Cinecito {
         return false;
     }
 
+    /**
+     * Verifica la disponibilidad de una sala en un determinado momento.
+     *
+     * @param room
+     * @param time
+     * @return
+     */
     public boolean available(String room, String time) {
         try {
+            //Se conecta a la base datos
             Connection conexion = MySQLConnection.get();
+
+            //Prepara el comando para la base datos
             String query = "SELECT COUNT(*) FROM functions WHERE room = ? AND time = ?";
             try ( PreparedStatement statement = conexion.prepareStatement(query)) {
                 statement.setString(1, room);
@@ -81,6 +106,7 @@ public class Function extends Cinecito {
 
                 try ( ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
+                        // Obtiene el conteo de funciones para la sala y momento específicos
                         int count = resultSet.getInt(1);
                         return count == 0;
                     }
@@ -93,6 +119,13 @@ public class Function extends Cinecito {
         return false;
     }
 
+    /**
+     * Con este metodo ingresando la id se elimina por completo el dato de la
+     * base de datos
+     *
+     * @param idFunctions
+     * @return
+     */
     public boolean delete(int idFunctions) {
         boolean result = false;
         try {
@@ -130,8 +163,8 @@ public class Function extends Cinecito {
 
                 conexion.close();
             } else {
-        String mensaje = "La sala y hora ya están ocupadas. No se puede agregar la función.";
-        JOptionPane.showMessageDialog(null, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
+                String mensaje = "La sala y hora ya están ocupadas. No se puede agregar la función.";
+                JOptionPane.showMessageDialog(null, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (Exception ex) {
